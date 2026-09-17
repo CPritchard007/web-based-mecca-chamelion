@@ -32,14 +32,12 @@ onUnmounted(connection.disconnect)
     <ImageExplorer v-if="scene" :key="scene.id" :src="scene.src" :title="scene.title" :peers="scenePeers" :sharing="connected" :role="role" :local-hider="connected && role === 'hider' ? hiderPosition : null" :painting="painting" :paint="paint" @paint="updatePaint" @pointer="sendPointer" @place="placeHider"/>
     <p v-else class="image-message">Add an image to src/assets/images to start exploring.</p>
     <header class="corner-panel identity-panel">
-      <a class="brand" href="./" aria-label="Chameleon home"><span class="brand-mark">c</span>chameleon<span class="brand-dot">.</span></a>
       <label for="scene">CHOOSE A SCENE</label>
       <select id="scene" v-model="selectedScene" @change="changeScene"><option v-for="item in scenes" :key="item.id" :value="item.id">{{ item.title }}</option></select>
-      <p>Countless little stories. Take a closer look.</p>
     </header>
     <button v-if="connected && role === 'hider'" class="paint-toggle corner-panel" :class="{ active: painting }" :aria-pressed="painting" title="Paint your player" @click="painting = !painting"><Paintbrush :size="19"/><span>{{ painting ? 'Done' : 'Paint' }}</span></button>
-    <aside class="corner-panel room-panel" aria-label="Exploring room">
-      <div class="session-heading"><span class="eyebrow">YOUR EXPLORING ROOM</span><Radio :size="16"/></div>
+    <aside class="corner-panel room-panel" aria-label="Join a room">
+      <div class="session-heading"><span class="eyebrow">JOIN A ROOM</span><Radio :size="16"/></div>
       <div class="status" aria-live="polite"><span :class="status"></span>{{ connected ? `Playing as a ${role}` : status === 'connecting' ? 'Connecting · Spectating' : 'Spectating · Explore freely' }}</div>
       <form v-show="!painting" @submit.prevent="join">
         <label for="room">ROOM NAME</label>

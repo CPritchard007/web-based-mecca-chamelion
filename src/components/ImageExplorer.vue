@@ -155,7 +155,7 @@ onUnmounted(()=>{ observer?.disconnect(); cancelAnimationFrame(frame) })
     <div v-if="painting && brushPreview" class="brush-preview" :style="brushPreviewStyle" aria-hidden="true"></div>
     <div v-if="failed" class="image-message">The image couldn’t load. Choose another scene or check the image file.</div>
     <div v-else-if="!loaded" class="image-message">Unfolding the scene…</div>
-    <div class="corner-panel help-panel"><strong><Move :size="15"/> Follow your curiosity</strong><p>{{ painting ? 'Paint your circle · Done to explore again' : sharing && role === 'hider' ? 'Drag your circle to move · Drag the scene to explore' : 'Drag to explore · Scroll or pinch to zoom' }}</p><small v-if="!painting">Arrow keys to pan · + / − to zoom · 0 to reset</small></div>
+    <div class="corner-panel help-panel"><strong><Move :size="15"/> {{ painting ? 'Blend into the scene' : sharing && role === 'hider' ? 'Find your hiding spot' : sharing && role === 'hunter' ? 'Seek out the hiders' : 'Ready or not, here we come' }}</strong><p>{{ painting ? 'Paint your circle to camouflage yourself' : sharing && role === 'hider' ? 'Drag your circle to hide · Paint it to blend in' : sharing && role === 'hunter' ? 'Search the scene · Zoom in to spot hidden players' : 'Join a room to hide or hunt with friends' }}</p><small v-if="!painting">Drag to look around · Scroll or pinch to zoom</small></div>
     <section v-if="painting" class="corner-panel paint-tools" aria-label="Painting tools" @pointerenter="brushPreview = null" @pointerdown.stop @pointermove.stop @pointerup.stop @dblclick.stop @wheel.stop @keydown.stop>
       <div class="eyebrow">PAINT YOUR PLAYER</div>
       <p>View locked to your circle.</p>

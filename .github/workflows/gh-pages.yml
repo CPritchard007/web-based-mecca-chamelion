@@ -1,0 +1,52 @@
+name: Build gh-pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Build for GitHub Pages
+        run: npm run build -- --base=./
+      - name: Commit build to gh-pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          touch dist/.nojekyll
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          publish_dir="$RUNNER_TEMP/gh-pages"
+          remote_branch=$(git ls-remote --heads origin gh-pages)
+          if [ -n "$remote_branch" ]; then
+            git fetch origin gh-pages
+            git worktree add --detach "$publish_dir" FETCH_HEAD
+          else
+            git worktree add --detach "$publish_dir" HEAD
+            git -C "$publish_dir" switch --orphan gh-pages
+          fi
+          rsync -a --delete --exclude='.git' dist/ "$publish_dir/"
+          git -C "$publish_dir" add --all
+          if git -C "$publish_dir" diff --cached --quiet; then
+            echo 'Build is unchanged.'
+            exit 0
+          fi
+          git -C "$publish_dir" commit -m "Deploy build from $GITHUB_SHA"
+          git -C "$publish_dir" push origin HEAD:gh-pages
